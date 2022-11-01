@@ -24,9 +24,17 @@ public class Tank : TankBase
         SetForces(output[0], output[1], dt);
 	}
     
-    protected override void OnTakeMine(GameObject mine)
+    protected override void OnTakeMine(Mine mine,int teamID)
     {
-        fitness *= 2;
+        int addScore = 0;
+        float multyply = 2;
+        if (mine.teamId==teamID)
+        {
+            addScore = 1;
+            multyply = 4;
+        }
+        ScoreManager.Instance.score[teamID] += addScore;
+        fitness *= multyply;
         genome.fitness = fitness;
     }
 }

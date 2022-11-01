@@ -5,15 +5,15 @@ using System.Collections.Generic;
 public class PopulationManager : MonoBehaviour
 {
     public GameObject TankPrefab;
-    public GameObject MinePrefab;
+    //public GameObject MinePrefab;
 
     public int PopulationCount = 40;
-    public int MinesCount = 50;
+    //public int MinesCount = 50;
 
-    public Vector3 SceneHalfExtents = new Vector3 (20.0f, 0.0f, 20.0f);
+    //public Vector3 SceneHalfExtents = new Vector3 (20.0f, 0.0f, 20.0f);
 
-    public float GenerationDuration = 20.0f;
-    public int IterationCount = 1;
+    //public float GenerationDuration = 20.0f;
+    //public int IterationCount = 1;
 
     public int EliteCount = 4;
     public float MutationChance = 0.10f;
@@ -32,12 +32,12 @@ public class PopulationManager : MonoBehaviour
     List<Tank> populationGOs = new List<Tank>();
     List<Genome> population = new List<Genome>();
     List<NeuralNetwork> brains = new List<NeuralNetwork>();
-    List<GameObject> mines = new List<GameObject>();
-    List<GameObject> goodMines = new List<GameObject>();
-    List<GameObject> badMines = new List<GameObject>();
+    //List<GameObject> mines = new List<GameObject>();
+    //List<GameObject> goodMines = new List<GameObject>();
+    //List<GameObject> badMines = new List<GameObject>();
      
-    float accumTime = 0;
-    bool isRunning = false;
+    //float accumTime = 0;
+    //bool isRunning = false;
 
     public int generation {
         get; private set;
@@ -93,47 +93,47 @@ public class PopulationManager : MonoBehaviour
         return fitness;
     }
 
-    static PopulationManager instance = null;
-
-    public static PopulationManager Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = FindObjectOfType<PopulationManager>();
-
-            return instance;
-        }
-    }
-
-    void Awake()
-    {
-        instance = this;
-    }
+    //static PopulationManager instance = null;
+    //
+    //public static PopulationManager Instance
+    //{
+    //    get
+    //    {
+    //        if (instance == null)
+    //            instance = FindObjectOfType<PopulationManager>();
+    //
+    //        return instance;
+    //    }
+    //}
+    //
+    //void Awake()
+    //{
+    //    instance = this;
+    //}
 
     void Start()
     {
     }
 
-    public void StartSimulation()
+    public void StartSimulation(int teamID)
     {
         // Create and confiugre the Genetic Algorithm
         genAlg = new GeneticAlgorithm(EliteCount, MutationChance, MutationRate);
 
-        GenerateInitialPopulation();
-        CreateMines();
+        GenerateInitialPopulation(teamID);
+        //CreateMines();
 
-        isRunning = true;
+        //isRunning = true;
     }
 
-    public void PauseSimulation()
-    {
-        isRunning = !isRunning;
-    }
+    //public void PauseSimulation()
+    //{
+    //    isRunning = !isRunning;
+    //}
 
     public void StopSimulation()
     {
-        isRunning = false;
+        //isRunning = false;
 
         generation = 0;
 
@@ -141,11 +141,11 @@ public class PopulationManager : MonoBehaviour
         DestroyTanks();
 
         // Destroy all mines
-        DestroyMines();
+        //DestroyMines();
     }
 
     // Generate the random initial population
-    void GenerateInitialPopulation()
+    void GenerateInitialPopulation(int teamID)
     {
         generation = 0;
 
@@ -162,10 +162,8 @@ public class PopulationManager : MonoBehaviour
             brains.Add(brain);
 
             population.Add(genome);
-            populationGOs.Add(CreateTank(genome, brain));
+            populationGOs.Add(CreateTank(genome, brain,teamID));
         }
-
-        accumTime = 0.0f;
     }
 
     // Creates a new NeuralNetwork
@@ -189,7 +187,8 @@ public class PopulationManager : MonoBehaviour
     }
 
     // Evolve!!!
-    void Epoch()
+    public void Epoc()
+    //void Epoch()
     {
         // Increment generation counter
         generation++;
@@ -222,29 +221,30 @@ public class PopulationManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate () 
+    public void LocalFixelUpdate(float dt,Vector3 SceneHalfExtents,List<Mine> mines,int teamID)
+    //void FixedUpdate () 
 	{
-        if (!isRunning)
-            return;
+       // if (!isRunning)
+       //     return;
         
-        float dt = Time.fixedDeltaTime;
+        
 
-        for (int i = 0; i < Mathf.Clamp((float)(IterationCount / 100.0f) * 50, 1, 50); i++)
+        //for (int i = 0; i < Mathf.Clamp((float)(Main.Instance.IterationCount / 100.0f) * 50, 1, 50); i++)
         {
             foreach (Tank t in populationGOs)
             {
                 // Get the nearest mine
-                GameObject mine = GetNearestMine(t.transform.position);
+                Mine mine = GetNearestMine(t.transform.position,mines);
 
                 // Set the nearest mine to current tank
                 t.SetNearestMine(mine);
 
-                mine = GetNearestGoodMine(t.transform.position);
+                mine = GetNearestGoodMine(t.transform.position,mines, teamID);
 
                 // Set the nearest mine to current tank
                 t.SetGoodNearestMine(mine);
 
-                mine = GetNearestBadMine(t.transform.position);
+                mine = GetNearestBadMine(t.transform.position,mines, teamID);
 
                 // Set the nearest mine to current tank
                 t.SetBadNearestMine(mine);
@@ -269,35 +269,37 @@ public class PopulationManager : MonoBehaviour
             }
 
             // Check the time to evolve
-            accumTime += dt;
-            if (accumTime >= GenerationDuration)
-            {
-                accumTime -= GenerationDuration;
-                Epoch();
-                break;
-            }
+            //accumTime += dt;
+            //if (accumTime >= GenerationDuration)
+            //{
+            //    accumTime -= GenerationDuration;
+            //    //Epoch();
+            //    return true;
+            //    //break;
+            //}
         }
 	}
 
 #region Helpers
-    Tank CreateTank(Genome genome, NeuralNetwork brain)
+    Tank CreateTank(Genome genome, NeuralNetwork brain,int teamID)
     {
         Vector3 position = GetRandomPos();
         GameObject go = Instantiate<GameObject>(TankPrefab, position, GetRandomRot());
         Tank t = go.GetComponent<Tank>();
+        t.teamID = teamID;
         t.SetBrain(genome, brain);
         return t;
     }
 
-    void DestroyMines()
-    {
-        foreach (GameObject go in mines)
-            Destroy(go);
-
-        mines.Clear();
-        goodMines.Clear();
-        badMines.Clear();
-    }
+    //void DestroyMines()
+    //{
+    //    foreach (GameObject go in mines)
+    //        Destroy(go);
+    //
+    //    mines.Clear();
+    //    goodMines.Clear();
+    //    badMines.Clear();
+    //}
 
     void DestroyTanks()
     {
@@ -309,55 +311,55 @@ public class PopulationManager : MonoBehaviour
         brains.Clear();
     }
 
-    void CreateMines()
-    {
-        // Destroy previous created mines
-        DestroyMines();
+    //void CreateMines()
+    //{
+    //    // Destroy previous created mines
+    //    DestroyMines();
+    //
+    //    for (int i = 0; i < MinesCount; i++)
+    //    {
+    //        Vector3 position = GetRandomPos();
+    //        GameObject go = Instantiate<GameObject>(MinePrefab, position, Quaternion.identity);
+    //
+    //        bool good = Random.Range(-1.0f, 1.0f) >= 0;
+    //
+    //        SetMineGood(good, go);
+    //
+    //        mines.Add(go);
+    //    }
+    //}
 
-        for (int i = 0; i < MinesCount; i++)
-        {
-            Vector3 position = GetRandomPos();
-            GameObject go = Instantiate<GameObject>(MinePrefab, position, Quaternion.identity);
+    //void SetMineGood(bool good, GameObject go)
+    //{
+    //    if (good)
+    //    {
+    //        go.GetComponent<Renderer>().material.color = Color.green;
+    //        goodMines.Add(go);
+    //    }
+    //    else
+    //    {
+    //        go.GetComponent<Renderer>().material.color = Color.red;
+    //        badMines.Add(go);
+    //    }
+    //}
 
-            bool good = Random.Range(-1.0f, 1.0f) >= 0;
-
-            SetMineGood(good, go);
-
-            mines.Add(go);
-        }
-    }
-
-    void SetMineGood(bool good, GameObject go)
-    {
-        if (good)
-        {
-            go.GetComponent<Renderer>().material.color = Color.green;
-            goodMines.Add(go);
-        }
-        else
-        {
-            go.GetComponent<Renderer>().material.color = Color.red;
-            badMines.Add(go);
-        }
-
-    }
-
-    public void RelocateMine(GameObject mine)
-    {
-        if (goodMines.Contains(mine))
-            goodMines.Remove(mine);
-        else
-            badMines.Remove(mine);
-
-        bool good = Random.Range(-1.0f, 1.0f) >= 0;
-
-        SetMineGood(good, mine);
-
-        mine.transform.position = GetRandomPos();
-    }
+    //public void RelocateMine(GameObject mine)
+    //{
+    //    if (goodMines.Contains(mine))
+    //        goodMines.Remove(mine);
+    //    else
+    //        badMines.Remove(mine);
+    //
+    //    bool good = Random.Range(-1.0f, 1.0f) >= 0;
+    //
+    //    SetMineGood(good, mine);
+    //
+    //    mine.transform.position = GetRandomPos();
+    //}
 
     Vector3 GetRandomPos()
     {
+        Vector3 SceneHalfExtents = Main.Instance.SceneHalfExtents;
         return new Vector3(Random.value * SceneHalfExtents.x * 2.0f - SceneHalfExtents.x, 0.0f, Random.value * SceneHalfExtents.z * 2.0f - SceneHalfExtents.z); 
     }
 
@@ -366,12 +368,12 @@ public class PopulationManager : MonoBehaviour
         return Quaternion.AngleAxis(Random.value * 360.0f, Vector3.up);
     }
 
-    GameObject GetNearestMine(Vector3 pos)
+    Mine GetNearestMine(Vector3 pos, List<Mine> mines)
     {
-        GameObject nearest = mines[0];
+        Mine nearest = mines[0];
         float distance = (pos - nearest.transform.position).sqrMagnitude;
 
-        foreach (GameObject go in mines)
+        foreach (Mine go in mines)
         {
             float newDist = (go.transform.position - pos).sqrMagnitude;
             if (newDist < distance)
@@ -382,15 +384,17 @@ public class PopulationManager : MonoBehaviour
         }
 
         return nearest;
-    }   
+    }
 
-    GameObject GetNearestGoodMine(Vector3 pos)
+    Mine GetNearestGoodMine(Vector3 pos,List<Mine> mines,int teamID)
     {
-        GameObject nearest = mines[0];
+        Mine nearest = mines[0];
         float distance = (pos - nearest.transform.position).sqrMagnitude;
 
-        foreach (GameObject go in goodMines)
+        foreach (Mine go in mines)
         {
+            if(go.teamId!= teamID)
+                continue;
             float newDist = (go.transform.position - pos).sqrMagnitude;
             if (newDist < distance)
             {
@@ -400,15 +404,17 @@ public class PopulationManager : MonoBehaviour
         }
 
         return nearest;
-    }   
+    }
 
-    GameObject GetNearestBadMine(Vector3 pos)
+    Mine GetNearestBadMine(Vector3 pos, List<Mine> mines,int teamID)
     {
-        GameObject nearest = mines[0];
+        Mine nearest = mines[0];
         float distance = (pos - nearest.transform.position).sqrMagnitude;
 
-        foreach (GameObject go in badMines)
+        foreach (Mine go in mines)
         {
+            if (go.teamId == teamID)
+                continue;
             float newDist = (go.transform.position - pos).sqrMagnitude;
             if (newDist < distance)
             {

@@ -3,14 +3,15 @@ using System.Collections;
 
 public class TankBase : MonoBehaviour
 {
+    public int teamID = -1;
     public float Speed = 10.0f;
     public float RotSpeed = 20.0f;
 
     protected Genome genome;
 	protected NeuralNetwork brain;
-    protected GameObject nearMine;
-    protected GameObject goodMine;
-    protected GameObject badMine;
+    protected Mine nearMine;
+    protected Mine goodMine;
+    protected Mine badMine;
     protected float[] inputs;
 
     public void SetBrain(Genome genome, NeuralNetwork brain)
@@ -21,17 +22,17 @@ public class TankBase : MonoBehaviour
         OnReset();
     }
 
-    public void SetNearestMine(GameObject mine)
+    public void SetNearestMine(Mine mine)
     {
         nearMine = mine;
     }
 
-    public void SetGoodNearestMine(GameObject mine)
+    public void SetGoodNearestMine(Mine mine)
     {
         goodMine = mine;
     }
 
-    public void SetBadNearestMine(GameObject mine)
+    public void SetBadNearestMine(Mine mine)
     {
         badMine = mine;
     }
@@ -41,12 +42,12 @@ public class TankBase : MonoBehaviour
         return goodMine == mine;
     }
 
-    protected Vector3 GetDirToMine(GameObject mine)
+    protected Vector3 GetDirToMine(Mine mine)
     {
         return (mine.transform.position - this.transform.position).normalized;
     }
     
-    protected bool IsCloseToMine(GameObject mine)
+    protected bool IsCloseToMine(Mine mine)
     {
         return (this.transform.position - nearMine.transform.position).sqrMagnitude <= 2.0f;
     }
@@ -66,8 +67,8 @@ public class TankBase : MonoBehaviour
 
         if(IsCloseToMine(nearMine))
         {
-            OnTakeMine(nearMine);
-            PopulationManager.Instance.RelocateMine(nearMine);
+            OnTakeMine(nearMine, teamID);
+            Main.Instance.RelocateMine(nearMine);
         }
 	}
 
@@ -76,7 +77,7 @@ public class TankBase : MonoBehaviour
 
     }
 
-    protected virtual void OnTakeMine(GameObject mine)
+    protected virtual void OnTakeMine(Mine mine,int teamID)
     {
     }
 

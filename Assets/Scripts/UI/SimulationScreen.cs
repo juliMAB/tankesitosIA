@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class SimulationScreen : MonoBehaviour
 {
+    public PopulationManager populationManager;
     public Text generationsCountTxt;
     public Text bestFitnessTxt;
     public Text avgFitnessTxt;
@@ -28,7 +29,7 @@ public class SimulationScreen : MonoBehaviour
         timerSlider.onValueChanged.AddListener(OnTimerChange);
         timerText = timerTxt.text;
 
-        timerTxt.text = string.Format(timerText, PopulationManager.Instance.IterationCount);
+        timerTxt.text = string.Format(timerText, Main.Instance.IterationCount);
 
         if (string.IsNullOrEmpty(generationsCountText))
             generationsCountText = generationsCountTxt.text;   
@@ -62,18 +63,18 @@ public class SimulationScreen : MonoBehaviour
 
     void OnTimerChange(float value)
     {
-        PopulationManager.Instance.IterationCount = (int)value;
-        timerTxt.text = string.Format(timerText, PopulationManager.Instance.IterationCount);
+        Main.Instance.IterationCount = (int)value;
+        timerTxt.text = string.Format(timerText, Main.Instance.IterationCount);
     }
 
     void OnPauseButtonClick()
     {
-        PopulationManager.Instance.PauseSimulation();
+        Main.Instance.PauseSimulation();
     }
 
     void OnStopButtonClick()
     {
-        PopulationManager.Instance.StopSimulation();
+        Main.Instance.StopSimulation();
         this.gameObject.SetActive(false);
         startConfigurationScreen.SetActive(true);
         lastGeneration = 0;
@@ -81,13 +82,13 @@ public class SimulationScreen : MonoBehaviour
 
     void LateUpdate()
     {
-        if (lastGeneration != PopulationManager.Instance.generation)
+        if (lastGeneration != populationManager.generation)
         {
-            lastGeneration = PopulationManager.Instance.generation;
-            generationsCountTxt.text = string.Format(generationsCountText, PopulationManager.Instance.generation);
-            bestFitnessTxt.text = string.Format(bestFitnessText, PopulationManager.Instance.bestFitness);
-            avgFitnessTxt.text = string.Format(avgFitnessText, PopulationManager.Instance.avgFitness);
-            worstFitnessTxt.text = string.Format(worstFitnessText, PopulationManager.Instance.worstFitness);
+            lastGeneration = populationManager.generation;
+            generationsCountTxt.text = string.Format(generationsCountText, populationManager.generation);
+            bestFitnessTxt.text = string.Format(bestFitnessText, populationManager.bestFitness);
+            avgFitnessTxt.text = string.Format(avgFitnessText, populationManager.avgFitness);
+            worstFitnessTxt.text = string.Format(worstFitnessText, populationManager.worstFitness);
         }
     }
 }

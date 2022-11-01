@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System;
 
+[Serializable]
 public class Genome
 {
 	public float[] genome;
@@ -18,7 +19,7 @@ public class Genome
         genome = new float[genesCount];
 
         for (int j = 0; j < genesCount; j++)
-            genome[j] = Random.Range(-1.0f, 1.0f);
+            genome[j] = UnityEngine.Random.Range(-1.0f, 1.0f);
 
         fitness = 0;
 	}
@@ -116,19 +117,19 @@ public class GeneticAlgorithm
 		child1.genome = new float[mom.genome.Length];
 		child2.genome = new float[mom.genome.Length];
 
-		int pivot = Random.Range(0, mom.genome.Length);
+		int pivot = UnityEngine.Random.Range(0, mom.genome.Length);
 
 		for (int i = 0; i < pivot; i++)
 		{
 			child1.genome[i] = mom.genome[i];
 
 			if (ShouldMutate())
-				child1.genome[i] += Random.Range(-mutationRate, mutationRate);
+				child1.genome[i] += UnityEngine.Random.Range(-mutationRate, mutationRate);
 
 			child2.genome[i] = dad.genome[i];
 
 			if (ShouldMutate())
-				child2.genome[i] += Random.Range(-mutationRate, mutationRate);
+				child2.genome[i] += UnityEngine.Random.Range(-mutationRate, mutationRate);
 		}
 
 		for (int i = pivot; i < mom.genome.Length; i++)
@@ -136,18 +137,18 @@ public class GeneticAlgorithm
 			child2.genome[i] = mom.genome[i];
 
 			if (ShouldMutate())
-				child2.genome[i] += Random.Range(-mutationRate, mutationRate);
+				child2.genome[i] += UnityEngine.Random.Range(-mutationRate, mutationRate);
 			
 			child1.genome[i] = dad.genome[i];
 
 			if (ShouldMutate())
-				child1.genome[i] += Random.Range(-mutationRate, mutationRate);
+				child1.genome[i] += UnityEngine.Random.Range(-mutationRate, mutationRate);
 		}
 	}
 
 	bool ShouldMutate()
 	{
-		return Random.Range(0.0f, 1.0f) < mutationChance;
+		return UnityEngine.Random.Range(0.0f, 1.0f) < mutationChance;
 	}
 
 	int HandleComparison(Genome x, Genome y)
@@ -158,7 +159,7 @@ public class GeneticAlgorithm
 
 	public Genome RouletteSelection()
 	{
-		float rnd = Random.Range(0, Mathf.Max(totalFitness, 0));
+		float rnd = UnityEngine.Random.Range(0, Mathf.Max(totalFitness, 0));
 
 		float fitness = 0;
 

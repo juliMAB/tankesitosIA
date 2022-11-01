@@ -424,8 +424,8 @@ public class PopulationManager : MonoBehaviour
         }
 
         return nearest;
-    }   
+    }
 
-#endregion
+    #endregion
 
 }

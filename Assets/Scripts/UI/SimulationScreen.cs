@@ -12,8 +12,7 @@ public class SimulationScreen : MonoBehaviour
     public Text worstFitnessTxt;
     public Text timerTxt;
     public Slider timerSlider;
-    public Button pauseBtn;
-    public Button stopBtn;
+    public Button SaveBtn;
     public GameObject startConfigurationScreen;
 
     string generationsCountText;
@@ -40,8 +39,7 @@ public class SimulationScreen : MonoBehaviour
         if (string.IsNullOrEmpty(worstFitnessText))
             worstFitnessText = worstFitnessTxt.text;   
 
-        pauseBtn.onClick.AddListener(OnPauseButtonClick);
-        stopBtn.onClick.AddListener(OnStopButtonClick);
+        SaveBtn.onClick.AddListener(SaveData);
     }
 
     void OnEnable()
@@ -61,23 +59,15 @@ public class SimulationScreen : MonoBehaviour
         worstFitnessTxt.text = string.Format(worstFitnessText, 0);
     }
 
+    void SaveData()
+    {
+        populationManager.SaveData();
+    }
+
     void OnTimerChange(float value)
     {
         Main.Instance.IterationCount = (int)value;
         timerTxt.text = string.Format(timerText, Main.Instance.IterationCount);
-    }
-
-    void OnPauseButtonClick()
-    {
-        Main.Instance.PauseSimulation();
-    }
-
-    void OnStopButtonClick()
-    {
-        Main.Instance.StopSimulation();
-        this.gameObject.SetActive(false);
-        startConfigurationScreen.SetActive(true);
-        lastGeneration = 0;
     }
 
     void LateUpdate()

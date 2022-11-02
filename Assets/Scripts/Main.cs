@@ -44,6 +44,16 @@ public class Main : MonoBehaviour
 
 
     #region UNITY_CALLS
+
+    private void Start()
+    {
+        int c = populationManagers.Length;
+        for (int i = 0; i < c; i++)
+        {
+            populationManagers[i].TeamID = i;
+        }
+    }
+
     private void FixedUpdate()
     {
         if (!isRunning)

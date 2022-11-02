@@ -28,6 +28,7 @@ public class StartConfigurationScreen : MonoBehaviour
     public Text sigmoidSlopeTxt;
     public Slider sigmoidSlopeSlider;
     public Button startButton;
+    public Button LoadButton;
     public GameObject simulationScreen;
     
     string populationText;
@@ -79,8 +80,12 @@ public class StartConfigurationScreen : MonoBehaviour
         startButton.onClick.AddListener(OnStartButtonClick);
 
         Main.Instance.onStartSimulation += StartSimulationUI;
+        LoadButton.onClick.AddListener(LoadData);
     }
-
+    void LoadData()
+    {
+        populationManager.LoadData();
+    }
     void OnPopulationCountChange(float value)
     {
         populationManager.PopulationCount = (int)value;

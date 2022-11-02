@@ -4,16 +4,11 @@ using System.Collections.Generic;
 
 public class PopulationManager : MonoBehaviour
 {
+    public int TeamID;
+
     public GameObject TankPrefab;
-    //public GameObject MinePrefab;
 
     public int PopulationCount = 40;
-    //public int MinesCount = 50;
-
-    //public Vector3 SceneHalfExtents = new Vector3 (20.0f, 0.0f, 20.0f);
-
-    //public float GenerationDuration = 20.0f;
-    //public int IterationCount = 1;
 
     public int EliteCount = 4;
     public float MutationChance = 0.10f;
@@ -32,12 +27,48 @@ public class PopulationManager : MonoBehaviour
     List<Tank> populationGOs = new List<Tank>();
     List<Genome> population = new List<Genome>();
     List<NeuralNetwork> brains = new List<NeuralNetwork>();
-    //List<GameObject> mines = new List<GameObject>();
-    //List<GameObject> goodMines = new List<GameObject>();
-    //List<GameObject> badMines = new List<GameObject>();
-     
-    //float accumTime = 0;
-    //bool isRunning = false;
+
+    public void LoadData()
+    {
+        GameData data = SaveSystem.Load("Team" + TeamID);
+        generation          = data.generationNumber;
+        PopulationCount     = data.PopulationCount;
+        EliteCount          = data.EliteCount;
+        MutationChance      = data.MutationChance;
+        MutationRate        = data.MutationRate;
+        InputsCount         = data.InputsCount;
+        HiddenLayers        = data.HiddenLayers;
+        OutputsCount        = data.OutputsCount;
+        NeuronsCountPerHL   = data.NeuronsCountPerHL;
+        Bias                = data.Bias;
+        P                   = data.P;
+
+        population          = data.genomes;
+        brains              = data.brains;
+
+
+
+    }
+
+    public void SaveData()
+    {
+        GameData data = new GameData();
+        data.generationNumber = generation;
+        data.PopulationCount = PopulationCount;
+        data.EliteCount = EliteCount;
+        data.MutationChance = MutationChance;
+        data.MutationRate = MutationRate;
+        data.InputsCount = InputsCount;
+        data.HiddenLayers = HiddenLayers;
+        data.OutputsCount = OutputsCount;
+        data.NeuronsCountPerHL = NeuronsCountPerHL;
+        data.Bias = Bias;
+        data.P = P;
+
+        data.genomes = population;
+        data.brains = brains;
+        SaveSystem.Save(data, "Team" + TeamID);
+    }
 
     public int generation {
         get; private set;

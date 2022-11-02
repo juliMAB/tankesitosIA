@@ -56,6 +56,5 @@ public class SimulationScreenMain : MonoBehaviour
         currentTime.text = "currentT: " + Main.Instance.AccumTime + "\n" + "MaxT: " + Main.Instance.GenerationDuration;
         score.text = "score: <color=blue> " + ScoreManager.Instance.score[0] + "</color>  -  <color=red>" + ScoreManager.Instance.score[1] + "</color>";
         lastLose.text = ScoreManager.Instance.lastLoser == 0 ? "BLUE" : "RED";
-        //generation.text = "score: <color=blue> " + Main.Instance.populationManagers[0].generation + "</color>  -  <color=red>" + Main.Instance.populationManagers[1].generation + "</color>";
     }
 }

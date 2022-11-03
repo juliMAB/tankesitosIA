@@ -1,0 +1,19 @@
+Desarrollar una demo partiendo del ejemplo de tanques dado en clase en los cuales dos entrenamientos de inteligencia artificial ocurran simultáneamente, llamados a partir de ahora equipo A y B.
+
+El consepto basico de esta demo son 2 populationManager, llamados desde un script "main" en el gameobject main, en este script, va existir el bucle principal y el start de la simulacion.
+
+Cada uno de los agentes de cada equipo debe ganar fitness al recoger una mina de su equipo, el como puntuar el fitness en otras circunstancias queda a su criterio.
+
+Para esto cree un script llamado scoremanager, el cual se encarga de ir almacenando el score de cada equipo.
+
+Al final de la generación, solo se reproduce el equipo que halla recabado mas fitness en total.
+
+El "main" va a tomar el equipo con menor score y le va a hacer epoch.
+
+No se debe modificar la función "SetForces" provista en el proyecto de ejemplo.
+
+no se modifica.
+
+Se debe poder serializar y des-serializar el genoma y la configuración de la red neuronal para poder reanudar el entrenamiento en otro momento.
+
+Mientras la simulacion este en ejecutandose, se puede hacer saveData para guardar el gen y las configuraciones iniciales del equipo, para cargarlo en el primer stage, se usa loaddata para cargar lo guardado previamente.

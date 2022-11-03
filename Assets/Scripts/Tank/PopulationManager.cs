@@ -24,12 +24,15 @@ public class PopulationManager : MonoBehaviour
     public float Bias = 1f;
     public float P = 0.5f;
 
+    public bool load = false;
+
     //public FileDataHandler dataHandler;
 
     GeneticAlgorithm genAlg;
 
     List<Tank> populationGOs = new List<Tank>();
     List<Genome> population = new List<Genome>();
+    List<Genome> savePopulation = new List<Genome>();
     List<NeuralNetwork> brains = new List<NeuralNetwork>();
 
     public void LoadData()
@@ -49,8 +52,9 @@ public class PopulationManager : MonoBehaviour
         Bias               = data.Bias                ;
         P                  = data.P                   ;
 
-        population = data.genomes;
-        brains = data.brains;
+        savePopulation     = data.genomes             ;
+
+        load = true;
     }
 
     public void SaveData()
@@ -71,6 +75,7 @@ public class PopulationManager : MonoBehaviour
 
         data.genomes = population                       ;
         data.brains =  brains                           ;
+        data.populationGOs = populationGOs              ;
 
         Main.Instance.dataHandler.Save(data,TeamID.ToString());
     }
@@ -140,26 +145,35 @@ public class PopulationManager : MonoBehaviour
     // Generate the random initial population
     void GenerateInitialPopulation()
     {
+        // Destroy previous tanks (if there are any)
+
         DestroyTanks();
 
-        if (generation != 0)
+        if (load)
         {
             for (int i = 0; i < PopulationCount; i++)
             {
-                NeuralNetwork brain = brains[i];
 
-                Genome genome = population[i];
+                NeuralNetwork brain = CreateBrain();
+
+                Genome genome = savePopulation[i];
+                //Genome genome = new Genome(brain.GetTotalWeightsCount());
+
+                brain.SetWeights(genome.genome);
+                brains.Add(brain);
+
+                population.Add(genome);
 
                 populationGOs.Add(CreateTank(genome, brain, TeamID));
             }
-
-
+        
+            //load = false;
             return;
         }
 
+        
         generation = 0;
 
-        // Destroy previous tanks (if there are any)
         
         
         for (int i = 0; i < PopulationCount; i++)
@@ -172,6 +186,7 @@ public class PopulationManager : MonoBehaviour
             brains.Add(brain);
 
             population.Add(genome);
+
             populationGOs.Add(CreateTank(genome, brain,TeamID));
         }
     }
@@ -260,6 +275,7 @@ public class PopulationManager : MonoBehaviour
                 t.SetBadNearestMine(mine);
 
                 // Think!! 
+                
                 t.Think(dt);
 
                 // Just adjust tank position when reaching world extents

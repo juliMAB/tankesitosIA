@@ -1,18 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
+[Serializable]
 public class TankBase : MonoBehaviour
 {
     public int teamID = -1;
     public float Speed = 10.0f;
     public float RotSpeed = 20.0f;
 
-    protected Genome genome;
-	protected NeuralNetwork brain;
-    protected Mine nearMine;
-    protected Mine goodMine;
-    protected Mine badMine;
-    protected float[] inputs;
+    [SerializeField] protected Genome genome;
+	[SerializeField] protected NeuralNetwork brain;
+    [SerializeField] protected Mine nearMine;
+    [SerializeField] protected Mine goodMine;
+    [SerializeField] protected Mine badMine;
+    [SerializeField] protected float[] inputs;
+    //public void Copy(Tank copy)
+    //{
+    //    teamID = copy.teamID;
+    //    Speed = copy.Speed;
+    //    RotSpeed = copy.RotSpeed;
+    //
+    //    genome = copy.genome;
+    //    brain = copy.brain;
+    //    nearMine = null;
+    //    goodMine = null;
+    //    badMine = null;
+    //    inputs = copy.inputs;
+    //}
+    public TankBase(TankBase copy)
+    {
+        teamID = copy.teamID;
+        Speed = copy.Speed;
+        RotSpeed = copy.RotSpeed;
+
+        genome = copy.genome;
+        brain = copy.brain;
+        nearMine = copy.nearMine;
+        goodMine = copy.goodMine;
+        badMine = copy.badMine;
+        inputs = copy.inputs;
+    }
 
     public void SetBrain(Genome genome, NeuralNetwork brain)
     {

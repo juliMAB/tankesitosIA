@@ -1,9 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
+[Serializable]
 public class Tank : TankBase
 {
-    float fitness = 0;
+    [SerializeField] float fitness = 0;
+
+    public Tank(Tank copy) : base(copy)
+    {
+        fitness = copy.fitness;
+    }
+    //public void Copy(Tank copy)
+    //{
+    //    base.Copy(copy);
+    //    fitness = copy.fitness;
+    //}
     protected override void OnReset()
     {
         fitness = 1;

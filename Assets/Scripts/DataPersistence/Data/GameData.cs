@@ -18,9 +18,11 @@ public class GameData
     public float P;
     public List<Genome> genomes;
     public List<NeuralNetwork> brains;
+    public List<Tank> populationGOs;
     public GameData() 
     {
         genomes = new List<Genome>();
         brains =  new List<NeuralNetwork>();
+        populationGOs = new List<Tank>();
     }
 }

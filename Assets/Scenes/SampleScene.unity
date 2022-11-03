@@ -15383,7 +15383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77728dce3b6a2f447a303103c3a3b3c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: data.json
+  fileName: data
+  extention: .json
   useEncryption: 0
   simulationScreenMain: {fileID: 1873831417}
   MinePrefab: {fileID: 1712181699425504, guid: 74d6116ddc0b6ab4686323b873e69fb8, type: 3}

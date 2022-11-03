@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System;
+using Palmmedia.ReportGenerator.Core;
 
 public class PopulationManager : MonoBehaviour
 {
@@ -21,6 +24,7 @@ public class PopulationManager : MonoBehaviour
     public float Bias = 1f;
     public float P = 0.5f;
 
+    //public FileDataHandler dataHandler;
 
     GeneticAlgorithm genAlg;
 
@@ -30,49 +34,48 @@ public class PopulationManager : MonoBehaviour
 
     public void LoadData()
     {
-        GameData data = SaveSystem.Load("Team" + TeamID);
-        generation          = data.generationNumber;
-        PopulationCount     = data.PopulationCount;
-        EliteCount          = data.EliteCount;
-        MutationChance      = data.MutationChance;
-        MutationRate        = data.MutationRate;
-        InputsCount         = data.InputsCount;
-        HiddenLayers        = data.HiddenLayers;
-        OutputsCount        = data.OutputsCount;
-        NeuronsCountPerHL   = data.NeuronsCountPerHL;
-        Bias                = data.Bias;
-        P                   = data.P;
+        string TeamData = "TeamData" + TeamID.ToString();
+        GameData data = new GameData();
+        data = Main.Instance.dataHandler.Load(TeamID.ToString());
+        generation         = data.generationNumber    ;
+        PopulationCount    = data.PopulationCount     ;
+        EliteCount         = data.EliteCount          ;
+        MutationChance     = data.MutationChance      ;
+        MutationRate       = data.MutationRate        ;
+        InputsCount        = data.InputsCount         ;
+        HiddenLayers       = data.HiddenLayers        ;
+        OutputsCount       = data.OutputsCount        ;
+        NeuronsCountPerHL  = data.NeuronsCountPerHL   ;
+        Bias               = data.Bias                ;
+        P                  = data.P                   ;
 
-        population          = data.genomes;
-        brains              = data.brains;
-
-
-
+        population = data.genomes;
+        brains = data.brains;
     }
 
     public void SaveData()
     {
+        string TeamData = "TeamData" + TeamID.ToString();
         GameData data = new GameData();
-        data.generationNumber = generation;
-        data.PopulationCount = PopulationCount;
-        data.EliteCount = EliteCount;
-        data.MutationChance = MutationChance;
-        data.MutationRate = MutationRate;
-        data.InputsCount = InputsCount;
-        data.HiddenLayers = HiddenLayers;
-        data.OutputsCount = OutputsCount;
-        data.NeuronsCountPerHL = NeuronsCountPerHL;
-        data.Bias = Bias;
-        data.P = P;
+        data.generationNumber   = generation            ;
+        data.PopulationCount    = PopulationCount       ;
+        data.EliteCount         = EliteCount            ;
+        data.MutationChance     = MutationChance        ;
+        data.MutationRate       = MutationRate          ;
+        data.InputsCount        = InputsCount           ;
+        data.HiddenLayers       = HiddenLayers          ;
+        data.OutputsCount       = OutputsCount          ;
+        data.NeuronsCountPerHL  = NeuronsCountPerHL     ;
+        data.Bias               = Bias                  ;
+        data.P                  = P                     ;
 
-        data.genomes = population;
-        data.brains = brains;
-        SaveSystem.Save(data, "Team" + TeamID);
+        data.genomes = population                       ;
+        data.brains =  brains                           ;
+
+        Main.Instance.dataHandler.Save(data,TeamID.ToString());
     }
 
-    public int generation {
-        get; private set;
-    }
+    public int generation = 0;
 
     public float bestFitness 
     {
@@ -124,64 +127,40 @@ public class PopulationManager : MonoBehaviour
         return fitness;
     }
 
-    //static PopulationManager instance = null;
-    //
-    //public static PopulationManager Instance
-    //{
-    //    get
-    //    {
-    //        if (instance == null)
-    //            instance = FindObjectOfType<PopulationManager>();
-    //
-    //        return instance;
-    //    }
-    //}
-    //
-    //void Awake()
-    //{
-    //    instance = this;
-    //}
-
-    void Start()
-    {
-    }
-
-    public void StartSimulation(int teamID)
+    public void StartSimulation()
     {
         // Create and confiugre the Genetic Algorithm
         genAlg = new GeneticAlgorithm(EliteCount, MutationChance, MutationRate);
 
-        GenerateInitialPopulation(teamID);
-        //CreateMines();
 
-        //isRunning = true;
-    }
-
-    //public void PauseSimulation()
-    //{
-    //    isRunning = !isRunning;
-    //}
-
-    public void StopSimulation()
-    {
-        //isRunning = false;
-
-        generation = 0;
-
-        // Destroy previous tanks (if there are any)
-        DestroyTanks();
-
-        // Destroy all mines
-        //DestroyMines();
+        
+        GenerateInitialPopulation();
     }
 
     // Generate the random initial population
-    void GenerateInitialPopulation(int teamID)
+    void GenerateInitialPopulation()
     {
+        DestroyTanks();
+
+        if (generation != 0)
+        {
+            for (int i = 0; i < PopulationCount; i++)
+            {
+                NeuralNetwork brain = brains[i];
+
+                Genome genome = population[i];
+
+                populationGOs.Add(CreateTank(genome, brain, TeamID));
+            }
+
+
+            return;
+        }
+
         generation = 0;
 
         // Destroy previous tanks (if there are any)
-        DestroyTanks();
+        
         
         for (int i = 0; i < PopulationCount; i++)
         {
@@ -193,7 +172,7 @@ public class PopulationManager : MonoBehaviour
             brains.Add(brain);
 
             population.Add(genome);
-            populationGOs.Add(CreateTank(genome, brain,teamID));
+            populationGOs.Add(CreateTank(genome, brain,TeamID));
         }
     }
 
@@ -298,16 +277,6 @@ public class PopulationManager : MonoBehaviour
                 // Set tank position
                 t.transform.position = pos;
             }
-
-            // Check the time to evolve
-            //accumTime += dt;
-            //if (accumTime >= GenerationDuration)
-            //{
-            //    accumTime -= GenerationDuration;
-            //    //Epoch();
-            //    return true;
-            //    //break;
-            //}
         }
 	}
 
@@ -322,16 +291,6 @@ public class PopulationManager : MonoBehaviour
         return t;
     }
 
-    //void DestroyMines()
-    //{
-    //    foreach (GameObject go in mines)
-    //        Destroy(go);
-    //
-    //    mines.Clear();
-    //    goodMines.Clear();
-    //    badMines.Clear();
-    //}
-
     void DestroyTanks()
     {
         foreach (Tank go in populationGOs)
@@ -342,61 +301,15 @@ public class PopulationManager : MonoBehaviour
         brains.Clear();
     }
 
-    //void CreateMines()
-    //{
-    //    // Destroy previous created mines
-    //    DestroyMines();
-    //
-    //    for (int i = 0; i < MinesCount; i++)
-    //    {
-    //        Vector3 position = GetRandomPos();
-    //        GameObject go = Instantiate<GameObject>(MinePrefab, position, Quaternion.identity);
-    //
-    //        bool good = Random.Range(-1.0f, 1.0f) >= 0;
-    //
-    //        SetMineGood(good, go);
-    //
-    //        mines.Add(go);
-    //    }
-    //}
-
-    //void SetMineGood(bool good, GameObject go)
-    //{
-    //    if (good)
-    //    {
-    //        go.GetComponent<Renderer>().material.color = Color.green;
-    //        goodMines.Add(go);
-    //    }
-    //    else
-    //    {
-    //        go.GetComponent<Renderer>().material.color = Color.red;
-    //        badMines.Add(go);
-    //    }
-    //}
-
-    //public void RelocateMine(GameObject mine)
-    //{
-    //    if (goodMines.Contains(mine))
-    //        goodMines.Remove(mine);
-    //    else
-    //        badMines.Remove(mine);
-    //
-    //    bool good = Random.Range(-1.0f, 1.0f) >= 0;
-    //
-    //    SetMineGood(good, mine);
-    //
-    //    mine.transform.position = GetRandomPos();
-    //}
-
     Vector3 GetRandomPos()
     {
         Vector3 SceneHalfExtents = Main.Instance.SceneHalfExtents;
-        return new Vector3(Random.value * SceneHalfExtents.x * 2.0f - SceneHalfExtents.x, 0.0f, Random.value * SceneHalfExtents.z * 2.0f - SceneHalfExtents.z); 
+        return new Vector3(UnityEngine.Random.value * SceneHalfExtents.x * 2.0f - SceneHalfExtents.x, 0.0f, UnityEngine.Random.value * SceneHalfExtents.z * 2.0f - SceneHalfExtents.z); 
     }
 
     Quaternion GetRandomRot()
     {
-        return Quaternion.AngleAxis(Random.value * 360.0f, Vector3.up);
+        return Quaternion.AngleAxis(UnityEngine.Random.value * 360.0f, Vector3.up);
     }
 
     Mine GetNearestMine(Vector3 pos, List<Mine> mines)
@@ -456,6 +369,62 @@ public class PopulationManager : MonoBehaviour
 
         return nearest;
     }
+
+    //public void LoadData(GameData data, string id)
+    //{
+    //    throw new System.NotImplementedException();
+    //}
+
+    //public void SaveData(GameData data, string id)
+    //{
+    //    var fields = typeof(GameData).GetFields();
+    //    foreach (var field in fields)
+    //    {
+    //        if (field.GetType() == typeof(SerializableDictionary<string, int>))
+    //        {
+    //            SerializableDictionary<string, int> a = (SerializableDictionary<string, int>)field.GetValue(null);
+    //            if (a.ContainsKey(id))
+    //                a.Remove(id);
+    //        }
+    //        else if (field.GetType() == typeof(SerializableDictionary<string, float>))
+    //        {
+    //            SerializableDictionary<string, int> a = (SerializableDictionary<string, int>)field.GetValue(null);
+    //            if (a.ContainsKey(id))
+    //                a.Remove(id);
+    //        }
+    //        else if (field.GetType() == typeof(SerializableDictionary<string, List<Genome>>))
+    //        {
+    //            SerializableDictionary<string, List<Genome>> a = (SerializableDictionary<string, List<Genome>>)field.GetValue(null);
+    //            if (a.ContainsKey(id))
+    //                a.Remove(id);
+    //        }
+    //        else if (field.GetType() == typeof(SerializableDictionary<string, List<NeuralNetwork>>))
+    //        {
+    //            SerializableDictionary<string, List<NeuralNetwork>> a = (SerializableDictionary<string, List<NeuralNetwork>>)field.GetValue(null);
+    //            if (a.ContainsKey(id))
+    //                a.Remove(id);
+    //        }
+    //    }
+    //    data.generationNumber.Add(id,generation);
+    //    data.PopulationCount.Add(id, PopulationCount);
+    //    data.EliteCount.Add(id, EliteCount);
+    //    data.MutationChance.Add(id, MutationChance);
+    //    data.MutationRate.Add(id, MutationRate);
+    //    data.InputsCount.Add(id, InputsCount);
+    //    data.HiddenLayers.Add(id, HiddenLayers);
+    //    data.OutputsCount.Add(id, OutputsCount);
+    //    data.NeuronsCountPerHL.Add(id, NeuronsCountPerHL);
+    //    data.Bias.Add(id, Bias);
+    //    data.P.Add(id, P);
+    //
+    //    data.genomes.Add(id, population);
+    //    data.brains.Add(id, brains);
+    //
+    //    //SaveSystem.Save(data, "Team" + TeamID);
+    //    //throw new System.NotImplementedException();
+    //}
+
+
 
     #endregion
 

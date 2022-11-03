@@ -85,6 +85,20 @@ public class StartConfigurationScreen : MonoBehaviour
     void LoadData()
     {
         populationManager.LoadData();
+        UpdateSliders();
+    }
+    public void UpdateSliders()
+    {
+        populationCountSlider.value = populationManager.PopulationCount;
+        minesCountSlider.value = Main.Instance.MinesCount;
+        generationDurationSlider.value = Main.Instance.GenerationDuration;
+        eliteCountSlider.value = populationManager.EliteCount;
+        mutationChanceSlider.value = populationManager.MutationChance * 100.0f;
+        mutationRateSlider.value = populationManager.MutationRate * 100.0f;
+        hiddenLayersCountSlider.value = populationManager.HiddenLayers;
+        neuronsPerHLSlider.value = populationManager.NeuronsCountPerHL;
+        biasSlider.value = -populationManager.Bias;
+        sigmoidSlopeSlider.value = populationManager.P;
     }
     void OnPopulationCountChange(float value)
     {

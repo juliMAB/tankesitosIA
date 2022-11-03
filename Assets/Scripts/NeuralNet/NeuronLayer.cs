@@ -3,12 +3,12 @@ using System.Collections;
 
 public class NeuronLayer
 {
-	private Neuron[] neurons;
-	private float[] outputs;
-	private int totalWeights = 0;
-	private int inputsCount = 0;
-	private float bias = 1;
-	private	float p = 0.5f;
+    [SerializeField] private Neuron[] neurons;
+    [SerializeField] private float[] outputs;
+    [SerializeField] private int totalWeights = 0;
+    [SerializeField] private int inputsCount = 0;
+    [SerializeField] private float bias = 1;
+    [SerializeField] private	float p = 0.5f;
 
 	public int NeuronsCount
 	{

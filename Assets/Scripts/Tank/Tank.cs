@@ -34,7 +34,7 @@ public class Tank : TankBase
             multyply = 4;
         }
         ScoreManager.Instance.score[teamID] += addScore;
-        fitness *= multyply;
+        fitness += multyply;
         genome.fitness = fitness;
     }
 }

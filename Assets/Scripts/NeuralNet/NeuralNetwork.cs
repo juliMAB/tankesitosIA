@@ -5,9 +5,9 @@ using System;
 [Serializable]
 public class NeuralNetwork
 {
-	List<NeuronLayer> layers = new List<NeuronLayer>();
-	int totalWeightsCount = 0;
-    int inputsCount = 0;
+    [SerializeField] List<NeuronLayer> layers = new List<NeuronLayer>();
+	[SerializeField] int totalWeightsCount = 0;
+    [SerializeField] int inputsCount = 0;
 
     public int InputsCount
     {

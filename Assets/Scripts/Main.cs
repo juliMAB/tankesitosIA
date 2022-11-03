@@ -1,9 +1,17 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour
 {
+
+    [Header("File Storage Config")]
+    [SerializeField] private string fileName;
+    [SerializeField] private string extention;
+    [SerializeField] private bool useEncryption;
+    //private GameData gameData;
+
     public SimulationScreenMain simulationScreenMain = null;
     public GameObject MinePrefab = null;
     public PopulationManager[] populationManagers;
@@ -16,7 +24,11 @@ public class Main : MonoBehaviour
 
     public Action onStartSimulation;
 
+    public FileDataHandler dataHandler;
+
     public int MinesCount = 50;
+
+    
 
     public int TeamsCount { get { return populationManagers.Length; } }
     public float AccumTime { get { return accumTime; } }
@@ -52,6 +64,7 @@ public class Main : MonoBehaviour
         {
             populationManagers[i].TeamID = i;
         }
+        dataHandler = new FileDataHandler(Application.dataPath, fileName, extention, false);
     }
 
     private void FixedUpdate()
@@ -140,7 +153,7 @@ public class Main : MonoBehaviour
         onStartSimulation?.Invoke();
         int c = populationManagers.Length;
         for (int i = 0; i < c; i++)
-            populationManagers[i].StartSimulation(i);
+            populationManagers[i].StartSimulation();
 
         CreateMines();
 
@@ -154,16 +167,17 @@ public class Main : MonoBehaviour
     }
     public void StopSimulation()
     {
-        isRunning = false;
-        int c = populationManagers.Length;
-        for (int i = 0; i < c; i++)
-            populationManagers[i].StopSimulation();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //isRunning = false;
+        //int c = populationManagers.Length;
+        //for (int i = 0; i < c; i++)
+        //    populationManagers[i].StopSimulation();
 
         // Destroy previous tanks (if there are any)
         //DestroyTanks();
 
         // Destroy all mines
-        DestroyMines();
+        //DestroyMines();
     }
     #endregion
 }

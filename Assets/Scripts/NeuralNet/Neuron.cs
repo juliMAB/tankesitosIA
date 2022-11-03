@@ -3,9 +3,9 @@ using System.Collections;
 
 public class Neuron
 {
-	private float[] weights;
-	private float bias;
-	private float p; 
+    [SerializeField] private float[] weights;
+    [SerializeField] private float bias;
+    [SerializeField] private float p; 
 
 	public int WeightsCount
 	{

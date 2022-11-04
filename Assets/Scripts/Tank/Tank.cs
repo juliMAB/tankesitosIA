@@ -5,7 +5,7 @@ using System;
 [Serializable]
 public class Tank : TankBase
 {
-    [SerializeField] float fitness = 0;
+    [SerializeField] float fitness = 1;
 
     public Tank(Tank copy) : base(copy)
     {
@@ -39,11 +39,11 @@ public class Tank : TankBase
     protected override void OnTakeMine(Mine mine,int teamID)
     {
         int addScore = 0;
-        float multyply = 2;
+        float multyply = 0;
         if (mine.teamId==teamID)
         {
             addScore = 1;
-            multyply = 4;
+            multyply = 1;
         }
         ScoreManager.Instance.score[teamID] += addScore;
         fitness += multyply;

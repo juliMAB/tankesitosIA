@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System;
-using Palmmedia.ReportGenerator.Core;
 
 public class PopulationManager : MonoBehaviour
 {

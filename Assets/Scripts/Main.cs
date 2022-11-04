@@ -86,7 +86,8 @@ public class Main : MonoBehaviour
                     Debug.Log("end match");
                     accumTime -= GenerationDuration;
                     ScoreManager.Instance.lastLoser = i;
-                    populationManagers[i].Epoc();
+                    if(!populationManagers[i].neverEvolve)
+                        populationManagers[i].Epoc();
                     ScoreManager.Instance.lastLoser = i;
                     for (int z = 0; z < ScoreManager.Instance.score.Length; z++)
                         ScoreManager.Instance.score[z] = 0;

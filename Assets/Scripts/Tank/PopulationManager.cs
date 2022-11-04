@@ -19,6 +19,7 @@ public class PopulationManager : MonoBehaviour
     public int NeuronsCountPerHL = 7;
     public float Bias = 1f;
     public float P = 0.5f;
+    public bool neverEvolve = false;
 
     public bool load = false;
 
@@ -51,6 +52,7 @@ public class PopulationManager : MonoBehaviour
         savePopulation     = data.genomes             ;
 
         load = true;
+        neverEvolve = true;
     }
 
     public void SaveData()

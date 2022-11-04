@@ -30,6 +30,7 @@ public class StartConfigurationScreen : MonoBehaviour
     public Button startButton;
     public Button LoadButton;
     public GameObject simulationScreen;
+    public Toggle neverEvolve;
     
     string populationText;
     string minesText;
@@ -79,8 +80,15 @@ public class StartConfigurationScreen : MonoBehaviour
 
         startButton.onClick.AddListener(OnStartButtonClick);
 
+        neverEvolve.onValueChanged.AddListener(SetNeverEvolve);
+
         Main.Instance.onStartSimulation += StartSimulationUI;
         LoadButton.onClick.AddListener(LoadData);
+    }
+
+    void SetNeverEvolve(bool t)
+    {
+        populationManager.neverEvolve = t;
     }
     void LoadData()
     {
@@ -99,6 +107,7 @@ public class StartConfigurationScreen : MonoBehaviour
         neuronsPerHLSlider.value = populationManager.NeuronsCountPerHL;
         biasSlider.value = -populationManager.Bias;
         sigmoidSlopeSlider.value = populationManager.P;
+        neverEvolve.isOn = populationManager.neverEvolve;
     }
     void OnPopulationCountChange(float value)
     {
